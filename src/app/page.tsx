@@ -63,6 +63,7 @@ export default async function Home() {
     params: {
       include_fallback: true,
       include_branch: false,
+      include: ['author'],
     },
   });
 

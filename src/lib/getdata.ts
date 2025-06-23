@@ -19,14 +19,20 @@ export const getData = async ({
      
       const query = params
       ? Object.keys(params)
-          .map(key => `${key}=${params[key].toString()}`)
+          .map(key => {
+            if (Array.isArray(params[key])) {
+              return params[key].map((item: string) => `${key}[]=${item}`).join('&');
+            } else {
+              return `${key}=${params[key].toString()}`;
+            }
+          })
           .join('&')
       : '';
       console.log("blog query",query)
   
       const url = entryUid
-        ? `${process.env.CONTENTSTACKHOST}v3/content_types/${contentType}/entries/${entryUid}?${includeAllReferences? "include_all=true":""}locale=en-us${query ? `&${query}` : ''}`
-        : `${process.env.CONTENTSTACKHOST}v3/content_types/${contentType}/entries?&include[]=author&locale=en-us${query ? `&${query}` : ''}`;
+        ? `${process.env.CONTENTSTACKHOST}v3/content_types/${contentType}/entries/${entryUid}?locale=en-us${query ? `&${query}` : ''}${includeAllReferences? "&include_all=true":""}`
+        : `${process.env.CONTENTSTACKHOST}v3/content_types/${contentType}/entries?locale=en-us${query ? `&${query}` : ''}`;
         
         // const url = entryUid
         // ? `${process.env.CONTENTSTACK_HOST}v3/content_types/${contentType}/entries/${entryUid}?&include[]=${referenceFieldUID}locale=en-us${query ? `&${query}` : ''}`
